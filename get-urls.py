@@ -9,11 +9,14 @@ import time
 
 print("ggg")
 
+CHROME_DRIVER_PATH="/home/XXXXXXXXXX/Downloads/chromedriver"
 
 option = webdriver.ChromeOptions()
 option.add_argument(" — incognito")
 
-browser = webdriver.Chrome(executable_path="/home/yigit/Downloads/chromedriver",chrome_options=option)
+
+
+browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=option)
 
 
 isQuery= True if "?" in sys.argv[1] else False

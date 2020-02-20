@@ -10,10 +10,12 @@ import numpy as np
 
 print("ggg")
 
+CHROME_DRIVER_PATH="/home/XXXXXXXXXXXXXXXXXXX/Downloads/chromedriver"
+
 option = webdriver.ChromeOptions()
 option.add_argument(" — incognito")
 
-browser = webdriver.Chrome(executable_path="/home/yigit/Downloads/chromedriver",chrome_options=option)
+browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=option)
 
 urls_path=sys.argv[1]
 
@@ -23,7 +25,9 @@ def logg(s):
     if DEBUG_MODE:
         print(str(s))
 
-with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out","a"):
+with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out","a") as outputcsv:
+    
+    outputcsv.write("median;mean;mean_pct;median_pct;URL;prices\n")
     for url in urls:
         url=url.strip()
 
@@ -71,6 +75,7 @@ with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out",
         for s in span1:
             logg(s.text)
             prices.append(int(s.text.split(",")[0].replace(".","")))
+            
 
         for s in span2:
             logg(s.text)
@@ -87,6 +92,10 @@ with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out",
         print(str(np.nanmin(prices)))
         print(str(np.nanmin(prices)*100 / np.mean(prices)))
         print(str(np.nanmin(prices)*100 / np.median(prices)))
+
+        outputcsv.write(str(np.median(prices))+";"+str(np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.median(prices))+";"+url+";"+str(prices)+"\n")
+
+
         
 
 browser.quit()

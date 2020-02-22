@@ -1,4 +1,5 @@
-
+import logging
+from datetime import datetime
 from selenium import webdriver 
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.support.ui import WebDriverWait 
@@ -8,9 +9,15 @@ import sys
 import time
 import numpy as np
 
-print("ggg")
 
-CHROME_DRIVER_PATH="/home/XXXXXXXXXXXXXXXXXXX/Downloads/chromedriver"
+
+logging.basicConfig(level=logging.INFO,format='%(asctime)-15s-%(levelname)s:%(pathname)s:%(lineno)s %(message)s')
+
+logger=logging.getLogger()
+
+logger.info("start")
+
+CHROME_DRIVER_PATH="/home/XXXXXX/Downloads/chromedriver"
 
 option = webdriver.ChromeOptions()
 option.add_argument(" — incognito")
@@ -19,13 +26,11 @@ browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=opt
 
 urls_path=sys.argv[1]
 
-DEBUG_MODE=False
+csvFileName=datetime.now().strftime("%Y%m%d_%H%M%S")+"-analyze.csv"
 
-def logg(s):
-    if DEBUG_MODE:
-        print(str(s))
+logger.info("OUTPUT_FILE:"+csvFileName)
 
-with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out","a") as outputcsv:
+with open(urls_path,"r") as urls ,open("output/"+csvFileName,"a") as outputcsv:
     
     outputcsv.write("median;mean;mean_pct;median_pct;URL;prices\n")
     for url in urls:
@@ -34,7 +39,7 @@ with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out",
         if url.startswith("#"):
             continue
 
-        logg(url)
+        logger.info(url)
         
         browser.get(url)
     
@@ -45,19 +50,19 @@ with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out",
         if len(a_tumu)==0:
             continue
 
-        logg(len(a_tumu))
+        logger.debug(len(a_tumu))
 
-        logg(a_tumu[0].text)
+        logger.debug(a_tumu[0].text)
 
         try:
             a_tumu[0].click()
         except :
-            logg("cant click!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            logger.warn("cant click!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             continue
 
         tds=browser.find_elements_by_xpath('//div[@id="tabMerchant"]//table[@id="merchant-list"]/tbody//td[@class="productPrice"]')
 
-        logg(len(tds))
+        logger.debug(len(tds))
 
 
         span1=browser.find_elements_by_xpath('//div[@id="tabMerchant"]//table[@id="merchant-list"]/tbody//span[@class="price product-price"]')
@@ -66,36 +71,43 @@ with open(urls_path,"r") as urls ,open("output/"+str(time.time())+"analyze.out",
 
         span3=browser.find_elements_by_xpath('//div[@id="tabMerchant"]//table[@id="merchant-list"]/tbody//span[@class="price product-price leftFit"]')
 
-        logg(len(span1))
-        logg(len(span2))
-        logg(len(span3))
+        logger.debug(len(span1))
+        logger.debug(len(span2))
+        logger.debug(len(span3))
 
         prices=[]
 
         for s in span1:
-            logg(s.text)
+            logger.debug(s.text)
             prices.append(int(s.text.split(",")[0].replace(".","")))
             
 
         for s in span2:
-            logg(s.text)
+            logger.debug(s.text)
             prices.append(int(s.text.split(",")[0].replace(".","")))
 
         for s in span3:
-            logg(s.text)
+            logger.debug(s.text)
             prices.append(int(s.text.split(",")[0].replace(".","")))
 
-        logg(prices)
+        logger.info(prices)
 
-        print(str(np.median(prices)))
-        print(str(np.mean(prices)))
-        print(str(np.nanmin(prices)))
-        print(str(np.nanmin(prices)*100 / np.mean(prices)))
-        print(str(np.nanmin(prices)*100 / np.median(prices)))
+        logger.debug(str(np.median(prices)))
+        logger.debug(str(np.mean(prices)))
+        logger.debug(str(np.nanmin(prices)))
+        logger.debug(str(np.nanmin(prices)*100 / np.mean(prices)))
+        logger.debug(str(np.nanmin(prices)*100 / np.median(prices)))
 
-        outputcsv.write(str(np.median(prices))+";"+str(np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.median(prices))+";"+url+";"+str(prices)+"\n")
+        row=str(np.median(prices))+";"+str(np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.median(prices))+";"+url+";"+str(prices)+"\n"
+
+        logger.info(row)
+
+        #outputcsv.write(str(np.median(prices))+";"+str(np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.mean(prices))+";"+str(np.nanmin(prices)*100 / np.median(prices))+";"+url+";"+str(prices)+"\n")
+        outputcsv.write(row)
 
 
+
+logger.info("OUTPUT_FILE:"+csvFileName)
         
 
 browser.quit()

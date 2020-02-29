@@ -9,14 +9,15 @@ import time
 
 print("ggg")
 
-CHROME_DRIVER_PATH="/home/XXXXXXXXXX/Downloads/chromedriver"
+CHROME_DRIVER_PATH="/home/yigit/Downloads/chromedriver"
+FIREFOX_DRIVER_PATH="/home/yigit/Downloads/geckodriver"
 
-option = webdriver.ChromeOptions()
-option.add_argument(" — incognito")
+##option = webdriver.ChromeOptions()
+##option.add_argument(" — incognito")
 
 
-
-browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=option)
+#browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=option)
+browser = webdriver.Firefox(executable_path=FIREFOX_DRIVER_PATH)
 
 
 isQuery= True if "?" in sys.argv[1] else False
@@ -40,6 +41,7 @@ with open("output/"+str(time.time())+"_urls.out","a") as urls:
         browser.get(sys.argv[1]+pageStr)
     
         time.sleep(10)
+        print("done with sleeping")
 
         all_product_as=browser.find_elements_by_xpath('//div[@class="box product no-hover" or  @class="box product"]/a')
 

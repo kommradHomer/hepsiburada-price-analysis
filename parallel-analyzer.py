@@ -26,11 +26,13 @@ browser = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH,chrome_options=opt
 
 urls_path=sys.argv[1]
 
-csvFileName=datetime.now().strftime("%Y%m%d_%H%M%S")+"-analyze.csv"
+outputFileName=sys.argv[2]
 
-logger.info("OUTPUT_FILE:"+csvFileName)
 
-with open(urls_path,"r") as urls ,open("output/"+csvFileName,"a") as outputcsv:
+logger.info("OUTPUT_FILE:"+outputFileName)
+
+
+with open(urls_path,"r") as urls ,open("output/"+outputFileName,"a") as outputcsv:
     
     outputcsv.write("median;mean;mean_pct;median_pct;URL;prices\n")
     for url in urls:

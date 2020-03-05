@@ -1,4 +1,5 @@
-
+import logging
+from datetime import datetime
 from selenium import webdriver 
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.support.ui import WebDriverWait 
@@ -7,7 +8,12 @@ from selenium.common.exceptions import TimeoutException
 import sys
 import time
 
-print("ggg")
+logging.basicConfig(level=logging.INFO,format='%(asctime)-15s-%(levelname)s:%(pathname)s:%(lineno)s %(message)s')
+
+logger=logging.getLogger()
+
+logger.info("start")
+
 
 CHROME_DRIVER_PATH="/home/yigit/Downloads/chromedriver"
 FIREFOX_DRIVER_PATH="/home/yigit/Downloads/geckodriver"
@@ -28,7 +34,10 @@ urlsArr=[]
 
 lastPageHit=False
 
-with open("output/"+str(time.time())+"_urls.out","a") as urls:
+dateTag=datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+with open("output/urls_"+dateTag+".out","a") as urls:
     while True:
         if lastPageHit:
             break
